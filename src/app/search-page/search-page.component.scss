@@ -1,0 +1,10 @@
+// li {
+//     display: inline;
+// }
+
+@media only screen and (min-device-width: 768px) {
+    .horizontal-list li:first-child {
+        list-style-type: none;
+    }
+}
+  

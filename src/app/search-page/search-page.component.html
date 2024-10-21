@@ -1,0 +1,132 @@
+<div class="px-2 md:px-20 pt-5 max-h-screen">
+  <div class="flex flex-col">
+    <p>
+      Welcome to the Open Movie Database Search Page! On this page, you can
+      search for any move you like. You can search by Title. The Database
+      returns the Top 5 movies!
+    </p>
+
+    <!-- Form  -->
+    <form #myform="ngForm" (ngSubmit)="onSubmit()" class="flex flex-row gap-2">
+      <div class="flex flex-col w-full">
+        <input
+          class="border rounded p-2 w-full"
+          id="searchText"
+          required
+          minlength="4"
+          type="text"
+          placeholder="Enter a title"
+          name="searchText"
+          [(ngModel)]="formData.searchText"
+        />
+
+        <div class="flex items-center text-align-center gap-1">
+          <p>Plot length:</p>
+          <input
+            type="radio"
+            name="plot_length"
+            value="short"
+            [(ngModel)]="formData.plot_length"
+          />
+          <label for="short"> Short </label>
+
+          <input
+            class="pl-3"
+            type="radio"
+            name="plot_length"
+            value="full"
+            [(ngModel)]="formData.plot_length"
+          />
+          <label for="short"> Full </label>
+        </div>
+      </div>
+      <input
+        type="submit"
+        class="btn btn-default"
+        value="Search"
+        class="bg-yellow-500 rounded px-2"
+      />
+    </form>
+    @if(error) {
+    <div class="text-red-500">Error: {{ error }}</div>
+    }
+  </div>
+
+  <!-- Show movies  -->
+  @if(movies$) {
+  <div class="flex flex-col gap-4 pt-3">
+    @for (movie of movies$; track movie) {
+    <div class="flex flex-col border rounded p-3">
+      <h1 class="text-3xl pb-2">{{ movie.Title }}</h1>
+
+      <div class="flex flex-row flex-wrap md:flex-nowrap">
+        <div class="flex flex-col w-full md:w-1/6">
+          <img
+            [src]="movie.Poster"
+            class="mx-auto object-contain w-full"
+            [alt]="'Movie poster from ' + movie.Title"
+          />
+        </div>
+
+        <div class="flex flex-col w-full md:w-4/5 p-2 md:pl-5">
+          <div class="flex justify-between">
+            <p
+              class="flex w-min px-2 rounded"
+              [class]="getTagColor(movie.Type)"
+            >
+              {{ movie.Type }}
+            </p>
+            <p>Rating: {{ movie.imdbRating }} / 10</p>
+          </div>
+
+          @if(movie.Plot.length <= 200 || chosen_length === 'short' ) {
+          <p>{{ movie.Plot }}</p>
+          } @else { @if(movie.showMore) {
+          <p>{{ movie.Plot.slice(0, 200) }}...</p>
+          } @else {
+          <p>{{ movie.Plot }}</p>
+          }
+          <button (click)="toggleReadMore(movie)" class="bg-gray-300 rounded">
+            Read {{ movie.showMore ? "More" : "Less" }}
+          </button>
+          }
+
+          <p class="text-gray-600">Produced in {{ movie.Year }}</p>
+
+          <div class="flex flex-row border border-x-0">
+            <p class="font-bold pr-2">Genre</p>
+            <ul class="horizontal-list md:flex list-disc list-inside">
+              @for(genre of (movie.Genre); track genre) {
+              <li class="pr-2">{{ genre }}</li>
+              }
+            </ul>
+          </div>
+          <div class="flex flex-row border border-x-0">
+            <p class="font-bold pr-2">Director</p>
+            <ul class="horizontal-list md:flex list-disc list-inside">
+              @for(director of (movie.Director); track director) {
+              <li class="pr-2">{{ director }}</li>
+              }
+            </ul>
+          </div>
+
+          <div class="flex flex-row border border-x-0">
+            <p class="font-bold pr-2">Actors</p>
+            <ul class="horizontal-list md:flex list-disc list-inside">
+              @for(actor of (movie.Actors); track actor) {
+              <li class="pr-2">{{ actor }}</li>
+              }
+            </ul>
+          </div>
+
+          <div class="flex flex-row border border-x-0">
+            <p class="font-bold pr-2">Awards</p>
+            <p>{{ movie.Awards }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>
